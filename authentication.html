@@ -5,363 +5,255 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learn+ | Authentication</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, rgba(106, 17, 203, 0.7) 0%, rgba(37, 117, 252, 0.7) 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-        }
+   /* Global reset + base font */
+*{
+    margin:0;padding:0;box-sizing:border-box;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
 
-        .background-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
-        
-        .container {
-            max-width: 450px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .header {
-            background: linear-gradient(135deg, rgb(248, 247, 249) 30%, rgba(96, 138, 211, 0.8) 70%);
-            color: #000000;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
+/* Page background + centering container */
+body{
+    background:linear-gradient(135deg,rgba(106,17,203,.7),rgba(37,117,252,.7));
+    min-height:100vh;display:flex;justify-content:center;align-items:center;
+    padding:20px;position:relative;
+}
 
-        .logo-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+/* Fullscreen fixed background image */
+.background-image{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    object-fit:cover;z-index:-1;
+}
 
-        .logo {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            margin: 0 auto 15px;
-            backdrop-filter: blur(10px);
-        }
+/* Main glass login card */
+.container{
+    max-width:450px;width:100%;
+    background:rgba(255,255,255,.1);
+    border-radius:15px;box-shadow:0 15px 30px rgba(0,0,0,.3);
+    overflow:hidden;backdrop-filter:blur(2px);
+    border:1px solid rgba(255,255,255,.2);
+}
 
-        .logo-placeholder {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, rgba(106, 17, 203, 0.8), rgba(37, 117, 252, 0.8));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            border: 4px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            color: #000000;
-            font-size: 2.5rem;
-            backdrop-filter: blur(10px);
-            font-weight: bold;
-        }
-        
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            font-weight: bold;
-            color: #000000;
-        }
-        
-        .header p {
-            font-size: 1rem;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-            font-weight: bold;
-            color: #000000;
-        }
-        
-        .auth-section {
-            padding: 30px;
-        }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-        }
-        
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: bold;
-            color: #000000;
-            transition: all 0.3s;
-        }
-        
-        .tab.active {
-            color: #000000;
-            border-bottom: 3px solid #000000;
-            font-weight: bold;
-        }
-        
-        .form-container {
-            display: none;
-        }
-        
-        .form-container.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        h2 {
-            margin-bottom: 20px;
-            color: #000000;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #000000;
-        }
-        
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.9);
-            color: #000000;
-            font-weight: bold;
-        }
-        
-        input::placeholder {
-            color: #000000;
-            font-weight: bold;
-            opacity: 0.7;
-        }
-        
-        input:focus {
-            border-color: #000000;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
-            background: rgba(255, 255, 255, 1);
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #ffffff;
-            border: 1px solid #000000;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
-        }
-        
-        .btn:hover {
-            background: #000000;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-        }
-        
-        .btn-success {
-            background: rgba(0, 100, 0, 0.8);
-            border: 1px solid #000000;
-            color: #ffffff;
-            font-weight: bold;
-        }
-        
-        .btn-success:hover {
-            background: #006400;
-            box-shadow: 0 5px 15px rgba(0, 100, 0, 0.4);
-        }
-        
-        .role-selection {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .role-option {
-            flex: 1;
-            text-align: center;
-            padding: 12px;
-            border: 2px solid #000000;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.9);
-            color: #000000;
-            font-weight: bold;
-        }
-        
-        .role-option:hover {
-            border-color: #000000;
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 1);
-        }
-        
-        .role-option.selected {
-            border-color: #000000;
-            background: rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .role-option i {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-            display: block;
-            font-weight: bold;
-        }
-        
-        .role-option span {
-            font-weight: bold;
-        }
-        
-        .message {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
-            display: none;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            font-weight: bold;
-            color: #000000;
-        }
-        
-        .success {
-            background: rgba(212, 237, 218, 0.9);
-            color: #000000;
-            border: 1px solid rgba(0, 0, 0, 0.3);
-        }
-        
-        .error {
-            background: rgba(248, 215, 218, 0.9);
-            color: #000000;
-            border: 1px solid rgba(0, 0, 0, 0.3);
-        }
-        
-        .user-info {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-            border: 2px solid #000000;
-        }
-        
-        .user-info h3 {
-            margin-bottom: 10px;
-            color: #000000;
-            font-weight: bold;
-        }
-        
-        .user-details {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #000000;
-        }
-        
-        .user-detail {
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-        }
-        
-        .user-detail strong {
-            color: #000000;
-            font-weight: bold;
-        }
-        
-        .user-detail span {
-            color: #000000;
-            font-weight: bold;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-            }
-            
-            .role-selection {
-                flex-direction: column;
-            }
+/* Top header area (gradient section) */
+.header{
+    background:linear-gradient(135deg,#f8f7f9 30%,rgba(96,138,211,.8) 70%);
+    color:#000;padding:30px;text-align:center;backdrop-filter:blur(10px);
+}
 
-            .logo, .logo-placeholder {
-                width: 100px;
-                height: 100px;
-            }
-            
-            body {
-                padding: 10px;
-            }
-        }
+/* Logo wrapper (just centers it) */
+.logo-container{ text-align:center;margin-bottom:20px; }
 
-        .btn.loading {
-            position: relative;
-            color: transparent;
-        }
+/* Common styles for logo / placeholder circle */
+.logo,.logo-placeholder{
+    border-radius:50%;border:4px solid rgba(255,255,255,.8);
+    box-shadow:0 4px 15px rgba(0,0,0,.3);
+    margin:0 auto 15px;backdrop-filter:blur(10px);display:block;
+}
 
-        .btn.loading::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            top: 50%;
-            left: 50%;
-            margin-left: -10px;
-            margin-top: -10px;
-            border: 2px solid #ffffff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s ease-in-out infinite;
-        }
+/* Real logo image */
+.logo{width:180px;height:180px;object-fit:cover;}
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+/* Gradient placeholder when no image */
+.logo-placeholder{
+    width:120px;height:120px;
+    background:linear-gradient(45deg,rgba(106,17,203,.8),rgba(37,117,252,.8));
+    display:flex;align-items:center;justify-content:center;
+    color:#000;font-size:2.5rem;font-weight:bold;
+}
+
+/* Main heading text */
+.header h1{
+    font-size:2rem;margin-bottom:10px;
+    text-shadow:0 2px 4px rgba(0,0,0,.3);font-weight:bold;color:#000;
+}
+
+/* Subtitle text */
+.header p{
+    font-size:1rem;text-shadow:0 1px 2px rgba(0,0,0,.3);
+    font-weight:bold;color:#000;
+}
+
+/* Body of the form area */
+.auth-section{ padding:30px; }
+
+/* Tabs row (Login / Register) */
+.tabs{
+    display:flex;margin-bottom:25px;
+    border-bottom:1px solid rgba(0,0,0,.3);
+}
+
+/* Single tab button */
+.tab{
+    flex:1;padding:12px;text-align:center;cursor:pointer;
+    font-weight:bold;color:#000;transition:.3s;
+}
+
+/* Active tab underline */
+.tab.active{
+    color:#000;border-bottom:3px solid #000;font-weight:bold;
+}
+
+/* Each form wrapper (login/register) */
+.form-container{ display:none; }
+
+/* Visible active form */
+.form-container.active{ display:block;animation:fadeIn .5s; }
+
+/* Section title (e.g. Login to your account) */
+h2{
+    margin-bottom:20px;color:#000;text-align:center;font-weight:bold;
+}
+
+/* Each label+input bundle */
+.form-group{ margin-bottom:15px; }
+
+/* Field labels */
+label{
+    display:block;margin-bottom:5px;font-weight:bold;color:#000;
+}
+
+/* Text fields + selects */
+input,select{
+    width:100%;padding:12px 15px;
+    border:1px solid rgba(0,0,0,.3);border-radius:8px;
+    font-size:1rem;transition:.3s;
+    background:rgba(255,255,255,.9);color:#000;font-weight:bold;
+}
+
+/* Placeholder text inside inputs */
+input::placeholder{
+    color:#000;font-weight:bold;opacity:.7;
+}
+
+/* Focus effect for inputs & selects */
+input:focus,select:focus{
+    border-color:#000;outline:none;
+    box-shadow:0 0 0 3px rgba(0,0,0,.2);
+    background:rgba(255,255,255,1);
+}
+
+/* Main button style (Login) */
+.btn{
+    width:100%;padding:14px;
+    background:rgba(0,0,0,.8);color:#fff;
+    border:1px solid #000;border-radius:8px;
+    font-size:1rem;font-weight:bold;cursor:pointer;
+    transition:.3s;margin-top:10px;
+}
+
+/* Button hover effect */
+.btn:hover{
+    background:#000;transform:translateY(-2px);
+    box-shadow:0 5px 15px rgba(0,0,0,.4);
+}
+
+/* Green style button (success actions) */
+.btn-success{
+    background:rgba(0,100,0,.8);
+    border:1px solid #000;color:#fff;font-weight:bold;
+}
+
+/* Hover state for success button */
+.btn-success:hover{
+    background:#006400;
+    box-shadow:0 5px 15px rgba(0,100,0,.4);
+}
+
+/* Container for role boxes row */
+.role-selection{
+    display:flex;gap:10px;margin-bottom:20px;
+}
+
+/* Single role card (Student/Instructor/Admin) */
+.role-option{
+    flex:1;text-align:center;padding:12px;
+    border:2px solid #000;border-radius:8px;
+    cursor:pointer;transition:.3s;
+    background:rgba(255,255,255,.9);color:#000;font-weight:bold;
+}
+
+/* Hover effect for role card */
+.role-option:hover{
+    border-color:#000;transform:translateY(-2px);
+    background:rgba(255,255,255,1);
+}
+
+/* Selected role card state */
+.role-option.selected{
+    border-color:#000;background:rgba(0,0,0,.1);
+    transform:translateY(-2px);
+}
+
+/* Icon inside role card */
+.role-option i{
+    font-size:1.5rem;margin-bottom:5px;display:block;font-weight:bold;
+}
+
+/* Role label text */
+.role-option span{ font-weight:bold; }
+
+/* Generic message box (hidden by default) */
+.message{
+    padding:12px;border-radius:8px;margin-bottom:15px;
+    text-align:center;display:none;backdrop-filter:blur(10px);
+    border:1px solid rgba(0,0,0,.2);font-weight:bold;color:#000;
+}
+
+/* Success message colors */
+.success{
+    background:rgba(212,237,218,.9);
+    color:#000;border:1px solid rgba(0,0,0,.3);
+}
+
+/* Error message colors */
+.error{
+    background:rgba(248,215,218,.9);
+    color:#000;border:1px solid rgba(0,0,0,.3);
+}
+
+/* Panel showing logged-in user info */
+.user-info{
+    background:rgba(255,255,255,.95);
+    padding:20px;border-radius:10px;margin-top:20px;
+    display:none;border:2px solid #000;
+}
+
+/* Box around user details */
+.user-details{
+    background:rgba(255,255,255,.9);
+    padding:15px;border-radius:8px;border:1px solid #000;
+}
+
+/* Single line of label:value in user details */
+.user-detail{
+    margin-bottom:8px;display:flex;justify-content:space-between;
+    font-weight:bold;
+}
+
+/* Responsive tweaks for mobile */
+@media (max-width:768px){
+    .container{ margin:10px; }
+    .role-selection{ flex-direction:column; }
+    .logo,.logo-placeholder{ width:100px;height:100px; }
+    body{ padding:10px; }
+}
+
+/* Loading state for button (spinner instead of text) */
+.btn.loading{ position:relative;color:transparent; }
+.btn.loading::after{
+    content:'';position:absolute;width:20px;height:20px;
+    top:50%;left:50%;margin:-10px;
+    border:2px solid #fff;border-radius:50%;
+    border-top-color:transparent;animation:spin 1s ease-in-out infinite;
+}
+
+/* Fade-in animation for forms */
+@keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+
+/* Spinner animation */
+@keyframes spin{ to{transform:rotate(360deg);} }
+
     </style>
+
 </head>
 <body>
     <!-- Background Image -->
@@ -386,6 +278,7 @@
                 <div class="tab" data-tab="register">Register</div>
             </div>
             
+            <!-- Login Form -->
             <div id="login-form" class="form-container active">
                 <h2>Login to Your Account</h2>
                 
@@ -421,23 +314,9 @@
                 </form>
             </div>
             
+            <!-- Registration Form -->
             <div id="register-form" class="form-container">
                 <h2>Create a New Account</h2>
-                
-                <div class="role-selection">
-                    <div class="role-option selected" data-role="student">
-                        <i>👨‍🎓</i>
-                        <span>Student</span>
-                    </div>
-                    <div class="role-option" data-role="instructor">
-                        <i>👨‍🏫</i>
-                        <span>Instructor</span>
-                    </div>
-                    <div class="role-option" data-role="admin">
-                        <i>👨‍💼</i>
-                        <span>Admin</span>
-                    </div>
-                </div>
                 
                 <div id="register-message" class="message"></div>
                 
@@ -460,6 +339,16 @@
                     <div class="form-group">
                         <label for="register-email">Email</label>
                         <input type="email" id="register-email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-role">Account Type</label>
+                        <select id="register-role" required>
+                            <option value="">Select your role</option>
+                            <option value="student">Student</option>
+                            <option value="instructor">Instructor</option>
+                            <option value="admin">Administrator</option>
+                        </select>
                     </div>
                     
                     <div class="form-group">
@@ -495,86 +384,110 @@
                         <strong>User ID:</strong> <span id="info-id">-</span>
                     </div>
                 </div>
-                <button class="btn btn-success" onclick="logout()" style="margin-top: 15px;">Logout</button>
+                <button class="btn btn-success" id="dashboard-btn" style="margin-top: 15px;">Go to Dashboard</button>
             </div>
         </div>
     </div>
 
     <script>
-        // JavaScript remains the same as previous version
+        // Tab switching functionality
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
+                // Update active tab
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
+                
+                // Show corresponding form
                 const tabName = tab.getAttribute('data-tab');
                 document.querySelectorAll('.form-container').forEach(form => {
                     form.classList.remove('active');
                 });
                 document.getElementById(`${tabName}-form`).classList.add('active');
+                
+                // Clear messages
                 document.getElementById('login-message').style.display = 'none';
                 document.getElementById('register-message').style.display = 'none';
             });
         });
         
+        // Role selection functionality (for login only)
         document.querySelectorAll('.role-option').forEach(option => {
             option.addEventListener('click', () => {
+                // Update selected role
                 document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
                 option.classList.add('selected');
             });
         });
         
+        // Get selected role for login
         function getSelectedRole() {
             return document.querySelector('.role-option.selected').getAttribute('data-role');
         }
         
+        // Get selected role for register
+        function getRegisterRole() {
+            return document.getElementById('register-role').value;
+        }
+        
+        // Login form submission
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const submitBtn = this.querySelector('.btn');
-            submitBtn.classList.add('loading');
             
             const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
             const role = getSelectedRole();
             
-            setTimeout(() => {
-                loginUser(username, password, role);
-                submitBtn.classList.remove('loading');
-            }, 500);
+            // Perform login
+            loginUser(username, password, role);
         });
         
+        // Registration form submission
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const submitBtn = this.querySelector('.btn');
-            submitBtn.classList.add('loading');
             
             const firstName = document.getElementById('register-firstname').value;
             const lastName = document.getElementById('register-lastname').value;
             const username = document.getElementById('register-username').value;
             const email = document.getElementById('register-email').value;
+            const role = getRegisterRole();
             const password = document.getElementById('register-password').value;
             const confirmPassword = document.getElementById('register-confirm-password').value;
-            const role = getSelectedRole();
             
-            setTimeout(() => {
-                if (password !== confirmPassword) {
-                    showMessage('register-message', 'Passwords do not match!', 'error');
-                    submitBtn.classList.remove('loading');
-                    return;
-                }
-                if (password.length < 6) {
-                    showMessage('register-message', 'Password must be at least 6 characters long!', 'error');
-                    submitBtn.classList.remove('loading');
-                    return;
-                }
-                registerUser(firstName, lastName, username, email, password, role);
-                submitBtn.classList.remove('loading');
-            }, 500);
+            // Validate role selection
+            if (!role) {
+                showMessage('register-message', 'Please select an account type!', 'error');
+                return;
+            }
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                showMessage('register-message', 'Passwords do not match!', 'error');
+                return;
+            }
+            
+            // Validate password length
+            if (password.length < 6) {
+                showMessage('register-message', 'Password must be at least 6 characters long!', 'error');
+                return;
+            }
+            
+            // Register new user
+            registerUser(firstName, lastName, username, email, password, role);
         });
         
-        function getUsers() { return JSON.parse(localStorage.getItem('learnplus_users') || '[]'); }
-        function saveUsers(users) { localStorage.setItem('learnplus_users', JSON.stringify(users)); }
+        // Get users from localStorage
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('learnplus_users') || '[]');
+        }
         
+        // Save users to localStorage
+        function saveUsers(users) {
+            localStorage.setItem('learnplus_users', JSON.stringify(users));
+        }
+        
+        // Login user
         function loginUser(username, password, role) {
+            // Simple validation
             if (!username || !password) {
                 showMessage('login-message', 'Please fill in all fields!', 'error');
                 return;
@@ -582,7 +495,10 @@
             
             showMessage('login-message', 'Logging in...', 'success');
             
+            // Get users from localStorage
             const users = getUsers();
+            
+            // Find user by username and password and role
             const user = users.find(u => 
                 u.username === username && 
                 u.password === password && 
@@ -590,25 +506,38 @@
             );
             
             if (user) {
+                // Store current user in localStorage
                 localStorage.setItem('currentUser', JSON.stringify(user));
+                
                 showMessage('login-message', `Successfully logged in as ${user.firstName}!`, 'success');
+                
+                // Redirect to appropriate dashboard based on role
                 setTimeout(() => {
-                    showUserInfo(user);
-                }, 1000);
+                    if (user.role === 'instructor') {
+                        window.location.href = 'instructor.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                }, 1500);
             } else {
                 showMessage('login-message', 'Invalid username, password, or role selection!', 'error');
             }
         }
         
+        // Register new user
         function registerUser(firstName, lastName, username, email, password, role) {
-            if (!firstName || !lastName || !username || !email || !password) {
+            // Simple validation
+            if (!firstName || !lastName || !username || !email || !password || !role) {
                 showMessage('register-message', 'Please fill in all fields!', 'error');
                 return;
             }
             
             showMessage('register-message', 'Creating account...', 'success');
             
+            // Get existing users
             const users = getUsers();
+            
+            // Check if username already exists
             const userExists = users.some(u => u.username === username || u.email === email);
             
             if (userExists) {
@@ -616,49 +545,82 @@
                 return;
             }
             
-            const newUser = { 
-                id: Date.now().toString(), 
-                firstName, 
-                lastName, 
-                username, 
-                email, 
-                password, 
-                role, 
-                createdAt: new Date().toISOString() 
+            // Create new user
+            const newUser = {
+                id: Date.now().toString(),
+                firstName,
+                lastName,
+                username,
+                email,
+                password,
+                role,
+                createdAt: new Date().toISOString()
             };
             
+            // Add to users array
             users.push(newUser);
+            
+            // Save back to localStorage
             saveUsers(users);
             
             showMessage('register-message', `Account created successfully! You can now login as ${role}.`, 'success');
+            
+            // Clear form
             document.getElementById('registerForm').reset();
             
+            // Switch to login tab after successful registration
             setTimeout(() => {
                 document.querySelector('.tab[data-tab="login"]').click();
             }, 2000);
         }
         
+        // Show user info after login
         function showUserInfo(user) {
+            // Hide login/register forms
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('register-form').style.display = 'none';
+            
+            // Show user info
             document.getElementById('user-info').style.display = 'block';
+            
+            // Populate user info
             document.getElementById('info-name').textContent = `${user.firstName} ${user.lastName}`;
             document.getElementById('info-username').textContent = user.username;
             document.getElementById('info-email').textContent = user.email;
             document.getElementById('info-role').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
             document.getElementById('info-id').textContent = user.id;
+            
+            // Update the dashboard button based on role
+            const dashboardBtn = document.getElementById('dashboard-btn');
+            if (user.role === 'instructor') {
+                dashboardBtn.onclick = function() {
+                    window.location.href = 'instructor.html';
+                };
+            } else {
+                dashboardBtn.onclick = function() {
+                    window.location.href = 'dashboard.html';
+                };
+            }
         }
         
+        // Logout function
         function logout() {
             localStorage.removeItem('currentUser');
+            
+            // Hide user info
             document.getElementById('user-info').style.display = 'none';
+            
+            // Show login form
             document.getElementById('login-form').style.display = 'block';
-            document.getElementById('register-form').style.display = 'block';
             document.querySelector('.tab[data-tab="login"]').click();
+            
+            // Clear login form
             document.getElementById('loginForm').reset();
+            
             showMessage('login-message', 'You have been logged out successfully.', 'success');
         }
         
+        // Show message function
         function showMessage(elementId, message, type) {
             const messageDiv = document.getElementById(elementId);
             messageDiv.textContent = message;
@@ -666,6 +628,7 @@
             messageDiv.style.display = 'block';
         }
         
+        // Check if user is already logged in on page load
         window.addEventListener('DOMContentLoaded', () => {
             const currentUser = localStorage.getItem('currentUser');
             if (currentUser) {
