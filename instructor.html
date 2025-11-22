@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn+ | Instructor Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            border-right: 3px solid var(--secondary);
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-section {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .logo-subtitle {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(52, 152, 219, 0.1);
+            border-left-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .nav-item.active {
+            background: rgba(52, 152, 219, 0.15);
+            border-left-color: var(--secondary);
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            font-size: 1.3rem;
+            margin-right: 15px;
+            width: 25px;
+            text-align: center;
+        }
+
+        .logout-section {
+            padding: 20px;
+            border-top: 2px solid var(--light);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--accent), #c0392b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--secondary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            color: var(--secondary);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            border-color: var(--secondary);
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .action-text {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Course List */
+        .course-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .course-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .course-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .course-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .course-info {
+            flex: 1;
+        }
+
+        .course-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .course-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-download {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-delete {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .modal-header h3 {
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .close {
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--accent);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* File Upload Styles */
+        .file-upload-area {
+            border: 2px dashed var(--secondary);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            background: rgba(52, 152, 219, 0.05);
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            background: rgba(52, 152, 219, 0.1);
+            border-color: var(--accent);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        .file-upload-area h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-area p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .file-requirements {
+            margin-top: 10px;
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+
+        .pdf-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .file-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .file-icon {
+            font-size: 1.8rem;
+            margin-right: 12px;
+            width: 30px;
+            text-align: center;
+            color: #e74c3c;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .empty-files {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-stats {
+                justify-content: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+                        /* Enhanced Course Styles */
+            .course-description {
+                color: #7f8c8d;
+                font-size: 0.9rem;
+                margin-bottom: 10px;
+                line-height: 1.4;
+            }
+
+            .stat-badge {
+                background: rgba(52, 152, 219, 0.1);
+                color: var(--secondary);
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+
+            .btn-view {
+                background: var(--success);
+                color: white;
+            }
+
+            .btn-view:hover {
+                background: #229954;
+            }
+
+            /* Course Details Modal */
+            .course-modal {
+                max-width: 500px;
+            }
+
+            .course-details-modal {
+                padding: 10px;
+            }
+
+            .course-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 25px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid var(--light);
+            }
+
+            .course-icon-large {
+                width: 60px;
+                height: 60px;
+                border-radius: 12px;
+                background: linear-gradient(45deg, var(--secondary), var(--accent));
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.8rem;
+                font-weight: bold;
+                margin-right: 15px;
+            }
+
+            .course-title h2 {
+                color: var(--primary);
+                margin-bottom: 5px;
+                font-size: 1.5rem;
+            }
+
+            .course-instructor {
+                color: var(--secondary);
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            .detail-section {
+                margin-bottom: 25px;
+            }
+
+            .detail-section h3 {
+                color: var(--primary);
+                margin-bottom: 12px;
+                font-size: 1.1rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .course-description {
+                color: var(--dark);
+                line-height: 1.6;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 15px;
+                border-radius: 8px;
+                border-left: 4px solid var(--secondary);
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+                margin-top: 15px;
+            }
+
+            .stat-item {
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                border: 1px solid var(--light);
+            }
+
+            .stat-icon {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+
+            .stat-number {
+                font-size: 1.3rem;
+                font-weight: bold;
+                color: var(--primary);
+                margin-bottom: 5px;
+            }
+
+            .stat-label {
+                color: #7f8c8d;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .info-grid {
+                display: grid;
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .info-item {
+                background: white;
+                padding: 12px 15px;
+                border-radius: 6px;
+                border: 1px solid var(--light);
+                font-size: 0.9rem;
+            }
+
+            .info-item strong {
+                color: var(--primary);
+            }
+
+            .course-actions-modal {
+                display: flex;
+                gap: 10px;
+                margin-top: 25px;
+                padding-top: 20px;
+                border-top: 2px solid var(--light);
+            }
+
+            .course-actions-modal .btn {
+                flex: 1;
+            }
+
+            /* Create Course Modal */
+            .create-course-modal {
+                padding: 10px;
+            }
+
+            .form-tips {
+                background: rgba(52, 152, 219, 0.05);
+                padding: 15px;
+                border-radius: 8px;
+                border-left: 4px solid var(--secondary);
+                margin: 20px 0;
+            }
+
+            .form-tips h4 {
+                color: var(--primary);
+                margin-bottom: 10px;
+                font-size: 1rem;
+            }
+
+            .form-tips ul {
+                color: #7f8c8d;
+                font-size: 0.9rem;
+                padding-left: 20px;
+            }
+
+            .form-tips li {
+                margin-bottom: 5px;
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo-section">
+            <div class="logo">Learn+</div>
+            <div class="logo-subtitle">INSTRUCTOR DASHBOARD</div>
+        </div>
+
+        <div class="user-profile">
+            <div class="avatar" id="user-avatar">IN</div>
+            <div class="user-name" id="user-name">Instructor Name</div>
+            <div class="user-role" id="user-role">Instructor</div>
+        </div>
+
+        <div class="nav-menu">
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </div>
+            <div class="nav-item" onclick="showSection('courses')">
+                <span class="nav-icon">📚</span>
+                My Courses
+            </div>
+            <div class="nav-item" onclick="showSection('quizzes')">
+                <span class="nav-icon">🧩</span>
+                Quizzes
+            </div>
+            <div class="nav-item" onclick="showSection('students')">
+                <span class="nav-icon">👥</span>
+                Students
+            </div>
+            <div class="nav-item" onclick="showSection('announcements')">
+                <span class="nav-icon">
+                📢
+                </span>
+                announcements
+            </div>
+        </div>
+
+        <div class="logout-section">
+            <button class="logout-btn" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <h1 id="welcome-message">Instructor Dashboard</h1>
+                <p id="dashboard-subtitle">Welcome back! Here's your teaching overview</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-card">
+                    <span class="stat-number" id="courses-count">0</span>
+                    <span class="stat-label">Courses</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="students-count">0</span>
+                    <span class="stat-label">Students</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="quizzes-count">0</span>
+                    <span class="stat-label">Quizzes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard-content">
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Quick Actions Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Actions</h2>
+                        <div class="card-icon">⚡</div>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="action-btn" onclick="createCourse()">
+                            <div class="action-icon">➕</div>
+                            <div class="action-text">New Course</div>
+                        </div>
+                        <div class="action-btn" onclick="showMessage('Create Quiz button clicked')">
+                            <div class="action-icon">🧩</div>
+                            <div class="action-text">Create Quiz</div>
+                        </div>
+                        <div class="action-btn" onclick="showMessage('Manage Students button clicked')">
+                            <div class="action-icon">👥</div>
+                            <div class="action-text">Manage Students</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Courses Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">My Courses</h2>
+                        <div class="card-icon">📚</div>
+                    </div>
+                    <div class="course-list" id="courses-list">
+                        <div class="empty-state">
+                            <p>No courses created yet. Create your first course to get started!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Sections (Hidden by default) -->
+        <div id="courses-content" class="section-content" style="display: none;">
+            <div class="card">
+                <h2>My Courses Management</h2>
+                <p>All your courses will be displayed here with PDF management options.</p>
+            </div>
+        </div>
+
+        <div id="quizzes-content" class="section-content" style="display: none;">
+            <div class="card">
+                <h2>Quizzes Section</h2>
+                <p>This is where quiz management would go.</p>
+            </div>
+        </div>
+
+        <div id="students-content" class="section-content" style="display: none;">
+            <div class="card">
+                <h2>Students Section</h2>
+                <p>This is where student management would go.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Management Modal -->
+    <div id="file-management-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-course-name">Course PDF Resources</h3>
+                <span class="close" onclick="closeFileModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="file-upload-area">
+                    <div class="upload-icon">📚</div>
+                    <h4>Upload PDF Resources</h4>
+                    <p>Only PDF files are accepted</p>
+                    <input type="file" id="course-file-input" accept=".pdf" multiple style="display: none;" 
+                           onchange="handleCourseFileUpload(this.files)">
+                    <button class="btn btn-primary" onclick="document.getElementById('course-file-input').click()">
+                        Upload PDF Files
+                    </button>
+                    <div class="file-requirements">
+                        <small>Accepted: PDF files only</small>
+                    </div>
+                </div>
+                
+                <div class="uploaded-files">
+                    <h4>Course PDF Resources</h4>
+                    <div class="files-list" id="course-files-list">
+                        <!-- Course PDF files will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Announcements Section -->
+<div id="announcements-content" class="section-content" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Course Announcements</h2>
+            <div class="card-icon">📢</div>
+        </div>
+        <div class="announcements-container">
+            <!-- Create Announcement Form -->
+            <div class="create-announcement">
+                <h3>Create New Announcement</h3>
+                <form id="announcement-form">
+                    <div class="form-group">
+                        <label for="announcement-course">Select Course</label>
+                        <select id="announcement-course" required>
+                            <option value="">Choose a course</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="announcement-title">Title</label>
+                        <input type="text" id="announcement-title" placeholder="Enter announcement title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="announcement-content">Content</label>
+                        <textarea id="announcement-content" placeholder="Enter announcement content" required 
+                                  style="width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.3); border-radius: 8px; 
+                                         background: rgba(255,255,255,0.9); color: #000000; font-weight: bold; 
+                                         min-height: 100px; resize: vertical;"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Announcement</button>
+                </form>
+            </div>
+
+            <!-- Announcements List -->
+            <div class="announcements-list">
+                <h3>Recent Announcements</h3>
+                <div id="announcements-list-content">
+                    <div class="empty-state">
+                        <p>No announcements yet. Create your first announcement!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        let currentCourseId = null;
+
+    // Authentication Check
+    function checkInstructorAuth() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        
+        // Check if user exists
+        if (!currentUser.id) {
+            window.location.href = 'index.html';
+            return null;
+        }
+        
+        // Check if user is instructor
+        if (currentUser.role !== 'instructor') {
+            alert('Access denied. Instructor role required.');
+            window.location.href = 'dashboard.html';
+            return null;
+        }
+        
+        return currentUser;
+    }
+
+    // Load User Data
+    function loadUserData() {
+        const user = checkInstructorAuth();
+        if (user) {
+            document.getElementById('user-name').textContent = `${user.firstName} ${user.lastName}`;
+            document.getElementById('user-avatar').textContent = 
+                user.firstName.charAt(0) + user.lastName.charAt(0);
+            document.getElementById('welcome-message').textContent = `Welcome, ${user.firstName}!`;
+            document.getElementById('user-role').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+        }
+    }
+
+    // Load Instructor Data
+    function loadInstructorData() {
+        const user = checkInstructorAuth();
+        if (!user) return;
+
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const userCourses = courses.filter(course => course.instructorId === user.id);
+        
+        // Update stats
+        document.getElementById('courses-count').textContent = userCourses.length;
+        document.getElementById('students-count').textContent = userCourses.reduce((total, course) => total + (course.students || 0), 0);
+        document.getElementById('quizzes-count').textContent = userCourses.reduce((total, course) => total + (course.quizzes || 0), 0);
+        
+        // Display courses
+        displayCourses(userCourses);
+    }
+
+    // Display Courses
+    function displayCourses(courses) {
+        const coursesList = document.getElementById('courses-list');
+        
+        if (courses.length === 0) {
+            coursesList.innerHTML = '<div class="empty-state"><p>No courses created yet. Create your first course to get started!</p></div>';
+            return;
+        }
+
+        coursesList.innerHTML = courses.map(course => `
+            <div class="course-item">
+                <div class="course-icon">${course.name.charAt(0)}</div>
+                <div class="course-info">
+                    <div class="course-name">${course.name}</div>
+                    <div class="course-description">${course.description || 'No description provided'}</div>
+                    <div class="course-stats">
+                        <span class="stat-badge">👥 ${course.students || 0} Students</span>
+                        <span class="stat-badge">🧩 ${course.quizzes || 0} Quizzes</span>
+                        <span class="stat-badge" id="pdf-count-${course.id}">📚 ${course.files ? course.files.length : 0} PDFs</span>
+                    </div>
+                </div>
+                <div class="course-actions">
+                    <button class="btn-small btn-primary" onclick="manageCourseFiles('${course.id}')">📚 Manage PDFs</button>
+                    <button class="btn-small btn-view" onclick="viewCourse('${course.id}')">👀 View Course</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Navigation Functions
+    function showSection(sectionName) {
+        // Hide all sections
+        document.querySelectorAll('.section-content').forEach(section => {
+            section.style.display = 'none';
+        });
+        document.getElementById('dashboard-content').style.display = 'none';
+        
+        // Show selected section
+        if (sectionName === 'dashboard') {
+            document.getElementById('dashboard-content').style.display = 'block';
+        } else {
+            document.getElementById(sectionName + '-content').style.display = 'block';
+        }
+        
+        // Load section-specific data
+        if (sectionName === 'announcements') {
+            loadAnnouncementsSection();
+        }
+        
+        // Update active nav item
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+    }
+
+    // Enhanced Course Creation with Better UI
+    function createCourse() {
+        const user = checkInstructorAuth();
+        if (!user) return;
+        
+        // Create a custom modal for course creation
+        const modalContent = `
+            <div class="create-course-modal">
+                <h3 style="color: var(--primary); margin-bottom: 20px;">Create New Course</h3>
+                
+                <div class="form-group">
+                    <label for="new-course-name">🎯 Course Name</label>
+                    <input type="text" id="new-course-name" placeholder="e.g., Mathematics 101" required 
+                        style="width: 100%; padding: 12px; border: 2px solid var(--light); border-radius: 8px; font-size: 1rem;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-course-description">📝 Course Description</label>
+                    <textarea id="new-course-description" placeholder="Describe what students will learn in this course..." 
+                            style="width: 100%; padding: 12px; border: 2px solid var(--light); border-radius: 8px; 
+                                    min-height: 100px; resize: vertical; font-size: 1rem;"></textarea>
+                </div>
+                
+                <div class="form-tips">
+                    <h4>💡 Tips for a great course:</h4>
+                    <ul>
+                        <li>Choose a clear, descriptive name</li>
+                        <li>Write a compelling description</li>
+                        <li>You can add PDF resources after creation</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-actions" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="submitNewCourse()" style="flex: 1;">🚀 Create Course</button>
+                    <button class="btn" onclick="closeCreateCourseModal()" style="flex: 1;">❌ Cancel</button>
+                </div>
+            </div>
+        `;
+        
+        showCustomModal(modalContent, 'Create New Course');
+    }
+
+    function submitNewCourse() {
+        const user = checkInstructorAuth();
+        if (!user) return;
+        
+        const courseName = document.getElementById('new-course-name').value;
+        const courseDescription = document.getElementById('new-course-description').value;
+        
+        if (!courseName) {
+            alert('Please enter a course name!');
+            return;
+        }
+        
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const newCourse = {
+            id: 'course-' + Date.now().toString(),
+            name: courseName,
+            description: courseDescription || 'No description provided',
+            instructorId: user.id,
+            instructorName: `${user.firstName} ${user.lastName}`,
+            createdAt: new Date().toISOString(),
+            students: 0,
+            quizzes: 0,
+            files: []
+        };
+        
+        courses.push(newCourse);
+        localStorage.setItem('instructor_courses', JSON.stringify(courses));
+        
+        closeCreateCourseModal();
+        loadInstructorData();
+        
+        // Show success message
+        alert(`🎉 Course "${courseName}" created successfully!\n\nYou can now add PDF resources to your course.`);
+    }
+
+    function closeCreateCourseModal() {
+        closeCourseModal();
+    }
+
+    // View Course Details
+    function viewCourse(courseId) {
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const course = courses.find(c => c.id === courseId);
+        
+        if (course) {
+            const courseDetails = `
+                <div class="course-details-modal">
+                    <div class="course-header">
+                        <div class="course-icon-large">${course.name.charAt(0)}</div>
+                        <div class="course-title">
+                            <h2>${course.name}</h2>
+                            <p class="course-instructor">By ${course.instructorName}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="course-content">
+                        <div class="detail-section">
+                            <h3>📝 Description</h3>
+                            <p class="course-description">${course.description || 'No description provided yet.'}</p>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h3>📊 Course Statistics</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-icon">👥</div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">${course.students || 0}</div>
+                                        <div class="stat-label">Students</div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon">🧩</div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">${course.quizzes || 0}</div>
+                                        <div class="stat-label">Quizzes</div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon">📚</div>
+                                    <div class="stat-info">
+                                        <div class="stat-number">${course.files ? course.files.length : 0}</div>
+                                        <div class="stat-label">PDF Resources</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h3>📅 Course Information</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <strong>Created:</strong> ${new Date(course.createdAt).toLocaleDateString()}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Course ID:</strong> ${course.id}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Instructor:</strong> ${course.instructorName}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="course-actions-modal">
+                        <button class="btn btn-primary" onclick="manageCourseFiles('${course.id}'); closeCourseModal();">📚 Manage PDF Resources</button>
+                        <button class="btn" onclick="closeCourseModal()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            showCustomModal(courseDetails, course.name);
+        }
+    }
+
+    // Show custom modal for course details
+    function showCustomModal(content, title) {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+            <div class="modal-content course-modal">
+                <div class="modal-header">
+                    <h3>${title}</h3>
+                    <span class="close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    ${content}
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    function closeCourseModal() {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (modal.style.display === 'flex') {
+                modal.remove();
+            }
+        });
+    }
+
+    // PDF Management Functions
+    function manageCourseFiles(courseId) {
+        currentCourseId = courseId;
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const course = courses.find(c => c.id === courseId);
+        
+        if (course) {
+            document.getElementById('modal-course-name').textContent = `PDF Resources for ${course.name}`;
+            document.getElementById('file-management-modal').style.display = 'flex';
+            displayCourseFiles(courseId);
+        }
+    }
+
+    function closeFileModal() {
+        document.getElementById('file-management-modal').style.display = 'none';
+        currentCourseId = null;
+    }
+
+    function handleCourseFileUpload(files) {
+        const user = checkInstructorAuth();
+        if (!user || !currentCourseId) return;
+
+        if (files.length === 0) return;
+
+        const pdfFiles = Array.from(files).filter(file => file.type === 'application/pdf');
+        
+        if (pdfFiles.length === 0) {
+            alert('Please select PDF files only.');
+            return;
+        }
+
+        const nonPdfFiles = Array.from(files).filter(file => file.type !== 'application/pdf');
+        if (nonPdfFiles.length > 0) {
+            alert('Only PDF files are accepted. Non-PDF files were ignored.');
+        }
+
+        pdfFiles.forEach(file => {
+            uploadCourseFile(file, currentCourseId, user.id);
+        });
+    }
+
+    function uploadCourseFile(file, courseId, instructorId) {
+        if (file.type !== 'application/pdf') {
+            alert('Only PDF files are allowed.');
+            return;
+        }
+
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const courseIndex = courses.findIndex(c => c.id === courseId);
+        
+        if (courseIndex === -1) return;
+
+        const fileData = {
+            id: 'pdf-' + Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            name: file.name,
+            size: formatFileSize(file.size),
+            type: 'application/pdf',
+            uploadDate: new Date().toISOString(),
+            instructorId: instructorId,
+            url: URL.createObjectURL(file)
+        };
+
+        if (!courses[courseIndex].files) {
+            courses[courseIndex].files = [];
+        }
+        courses[courseIndex].files.push(fileData);
+        
+        localStorage.setItem('instructor_courses', JSON.stringify(courses));
+        
+        displayCourseFiles(courseId);
+        updateCoursePDFCount(courseId);
+        alert(`PDF "${file.name}" uploaded to course successfully!`);
+    }
+
+    function displayCourseFiles(courseId) {
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const course = courses.find(c => c.id === courseId);
+        const filesList = document.getElementById('course-files-list');
+
+        if (!course || !course.files || course.files.length === 0) {
+            filesList.innerHTML = '<div class="empty-files">No PDF resources uploaded for this course yet</div>';
+            return;
+        }
+
+        filesList.innerHTML = course.files.map(file => `
+            <div class="file-item">
+                <div class="file-icon">📕</div>
+                <div class="file-info">
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-meta">
+                        <span>${file.size}</span>
+                        <span>${new Date(file.uploadDate).toLocaleDateString()}</span>
+                        <span class="pdf-badge">PDF</span>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <button class="btn-small btn-download" onclick="downloadCourseFile('${courseId}', '${file.id}')">
+                        📥 Download
+                    </button>
+                    <button class="btn-small btn-delete" onclick="deleteCourseFile('${courseId}', '${file.id}')">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateCoursePDFCount(courseId) {
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const course = courses.find(c => c.id === courseId);
+        
+        if (course && course.files) {
+            const pdfCount = course.files.length;
+            const countElement = document.getElementById(`pdf-count-${courseId}`);
+            if (countElement) {
+                countElement.textContent = `📚 ${pdfCount} PDF${pdfCount !== 1 ? 's' : ''}`;
+            }
+        }
+    }
+
+    function downloadCourseFile(courseId, fileId) {
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const course = courses.find(c => c.id === courseId);
+        const file = course?.files?.find(f => f.id === fileId);
+        
+        if (file && file.url) {
+            const a = document.createElement('a');
+            a.href = file.url;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            alert('PDF file not found or download not available in demo mode');
+        }
+    }
+
+    function deleteCourseFile(courseId, fileId) {
+        if (!confirm('Are you sure you want to delete this PDF resource?')) return;
+
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const courseIndex = courses.findIndex(c => c.id === courseId);
+        
+        if (courseIndex !== -1 && courses[courseIndex].files) {
+            courses[courseIndex].files = courses[courseIndex].files.filter(file => file.id !== fileId);
+            localStorage.setItem('instructor_courses', JSON.stringify(courses));
+            displayCourseFiles(courseId);
+            updateCoursePDFCount(courseId);
+            alert('PDF resource deleted successfully!');
+        }
+    }
+
+    // Announcements Functions
+    function loadAnnouncementsSection() {
+        const user = checkInstructorAuth();
+        if (!user) return;
+
+        // Load courses for dropdown
+        loadCoursesForAnnouncements();
+        
+        // Load existing announcements
+        loadAnnouncements();
+    }
+
+    function loadCoursesForAnnouncements() {
+        const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+        const user = checkInstructorAuth();
+        const userCourses = courses.filter(course => course.instructorId === user.id);
+        
+        const courseSelect = document.getElementById('announcement-course');
+        courseSelect.innerHTML = '<option value="">Choose a course</option>';
+        
+        userCourses.forEach(course => {
+            const option = document.createElement('option');
+            option.value = course.id;
+            option.textContent = course.name;
+            courseSelect.appendChild(option);
+        });
+    }
+
+    function loadAnnouncements() {
+        const announcements = JSON.parse(localStorage.getItem('instructor_announcements') || '[]');
+        const user = checkInstructorAuth();
+        const userAnnouncements = announcements.filter(announcement => announcement.instructorId === user.id);
+        
+        const announcementsList = document.getElementById('announcements-list-content');
+        
+        if (userAnnouncements.length === 0) {
+            announcementsList.innerHTML = '<div class="empty-state"><p>No announcements yet. Create your first announcement!</p></div>';
+            return;
+        }
+
+        // Sort by date (newest first)
+        userAnnouncements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        announcementsList.innerHTML = userAnnouncements.map(announcement => {
+            const courses = JSON.parse(localStorage.getItem('instructor_courses') || '[]');
+            const course = courses.find(c => c.id === announcement.courseId);
+            const courseName = course ? course.name : 'Unknown Course';
+            
+            return `
+                <div class="announcement-item">
+                    <div class="announcement-header">
+                        <div>
+                            <div class="announcement-title">${announcement.title}</div>
+                            <span class="announcement-course">${courseName}</span>
+                        </div>
+                    </div>
+                    <div class="announcement-content">${announcement.content}</div>
+                    <div class="announcement-meta">
+                        <span class="announcement-date">Posted on ${new Date(announcement.createdAt).toLocaleDateString()} at ${new Date(announcement.createdAt).toLocaleTimeString()}</span>
+                        <div class="announcement-actions">
+                            <button class="btn-small btn-edit" onclick="editAnnouncement('${announcement.id}')">✏️ Edit</button>
+                            <button class="btn-small btn-delete" onclick="deleteAnnouncement('${announcement.id}')">🗑️ Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Announcement form submission
+    document.getElementById('announcement-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        createAnnouncement();
+    });
+
+    function createAnnouncement() {
+        const user = checkInstructorAuth();
+        if (!user) return;
+
+        const courseId = document.getElementById('announcement-course').value;
+        const title = document.getElementById('announcement-title').value;
+        const content = document.getElementById('announcement-content').value;
+
+        if (!courseId || !title || !content) {
+            alert('Please fill in all fields!');
+            return;
+        }
+
+        const announcements = JSON.parse(localStorage.getItem('instructor_announcements') || '[]');
+        
+        const newAnnouncement = {
+            id: 'announcement-' + Date.now().toString(),
+            courseId: courseId,
+            instructorId: user.id,
+            instructorName: `${user.firstName} ${user.lastName}`,
+            title: title,
+            content: content,
+            createdAt: new Date().toISOString()
+        };
+
+        announcements.push(newAnnouncement);
+        localStorage.setItem('instructor_announcements', JSON.stringify(announcements));
+
+        // Reset form
+        document.getElementById('announcement-form').reset();
+        
+        // Reload announcements
+        loadAnnouncements();
+        
+        alert('Announcement posted successfully!');
+    }
+
+    function editAnnouncement(announcementId) {
+        const announcements = JSON.parse(localStorage.getItem('instructor_announcements') || '[]');
+        const announcement = announcements.find(a => a.id === announcementId);
+        
+        if (announcement) {
+            const newTitle = prompt('Edit announcement title:', announcement.title);
+            const newContent = prompt('Edit announcement content:', announcement.content);
+            
+            if (newTitle !== null && newContent !== null) {
+                announcement.title = newTitle;
+                announcement.content = newContent;
+                localStorage.setItem('instructor_announcements', JSON.stringify(announcements));
+                loadAnnouncements();
+                alert('Announcement updated successfully!');
+            }
+        }
+    }
+
+    function deleteAnnouncement(announcementId) {
+        if (!confirm('Are you sure you want to delete this announcement?')) return;
+
+        const announcements = JSON.parse(localStorage.getItem('instructor_announcements') || '[]');
+        const updatedAnnouncements = announcements.filter(a => a.id !== announcementId);
+        
+        localStorage.setItem('instructor_announcements', JSON.stringify(updatedAnnouncements));
+        loadAnnouncements();
+        alert('Announcement deleted successfully!');
+    }
+
+    // Helper Functions
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function showMessage(message) {
+        alert(message);
+    }
+
+    // Mobile Menu Toggle
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+    }
+
+    // Logout Function
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'authentication.html';
+        }
+    }
+
+    // Initialize Dashboard
+    window.addEventListener('DOMContentLoaded', () => {
+        const user = checkInstructorAuth();
+        if (user) {
+            loadUserData();
+            loadInstructorData();
+        }
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.querySelector('.menu-tog  gle');
+        
+        if (window.innerWidth <= 768 && 
+            !sidebar.contains(e.target) && 
+            !menuToggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+        const modal = document.getElementById('file-management-modal');
+        if (e.target === modal) {
+            closeFileModal();
+        }
+    });
+    </script>
+</body>
+</html>
